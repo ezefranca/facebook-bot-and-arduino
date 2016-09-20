@@ -16,7 +16,7 @@ app.use(bodyParser.json())
 
 // Index route
 app.get('/', function (req, res) {
-    res.send('olá amiguinho, tudo bem?')
+    res.send('Olá amiguinho, tudo bem?')
 })
 
 // for Facebook verification
@@ -44,7 +44,8 @@ app.post('/webhook/', function (req, res) {
     }
     res.sendStatus(200)
 })
-const token = "c3fad55c463f313736f0e1cc52f8ff73"
+
+const token = process.env.FB_PAGE_ACCESS_TOKEN
 
 function sendTextMessage(sender, text) {
     let messageData = { text:text }
