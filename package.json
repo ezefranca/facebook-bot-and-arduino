@@ -1,7 +1,7 @@
 {
-  "name": "bot",
+  "name": "compreumcarro",
   "version": "1.0.0",
-  "description": "",
+  "description": "compre um carro pelo chat",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,6 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "request": "^2.75.0"
+    "request": "^2.74.0"
   }
 }
