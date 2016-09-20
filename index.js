@@ -5,6 +5,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
+var lampadaLigada = new Boolean(false);
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -40,12 +41,29 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             let text = event.message.text
             sendTextMessage(sender, "Voce me disse " + text.substring(0, 200) + " " + "...nao entendi, mas depois te ajudo a comprar um carro beleza? 👍 ")
-        }
-    }
-    res.sendStatus(200)
+            if(text == "ligar"){
+                lampadaLigada = true;
+                sendJsonData(req, res, lampadaLigada)
+                return res.send({"status": "on"});
+            }
+            else if(text == "desligar"){
+                lampadaLigada = false;
+                sendJsonData(req, res, lampadaLigada)
+                return res.send({"status": "off"});
+            }
+      }
+  }
+  res.sendStatus(200)
 })
 
 const token = "EAAK38x1SRkUBAGeDEOtxnleV175oEcmSphJhbOKGGcDpZAHE0JDnXOk94mZCkG10x8C3Njps6lKhuxpCc7hkOXuCnMQo7U8r5tCoOnn7TalkrQUhKsiYKWxNMwUZBUAPEDKRNJhqLlOLqFEbIn2VIy7qoQSJFG4JJ2ME10vJQZDZD"
+
+function sendJsonData(req, res, status) {
+    app.get('/', function (req, res) {
+    let data = {"status" : status}
+    res.send(data)
+  })
+}
 
 function sendTextMessage(sender, text) {
     let messageData = { text:text }
