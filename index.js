@@ -42,30 +42,14 @@ app.post('/webhook/', function (req, res) {
             let text = event.message.text
             
             if(text == "ligar"){
-                var fs = require('fs');
-                fs.writeFile("/status/", "on", function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-
-                    console.log("The file was saved!");
-                }); 
+                sendStatus("on")
                 sendTextMessage(sender, "Ligando a lampada 💡💡")
                 lampadaLigada = true;
                 sendJsonData(req, res, lampadaLigada)
                 return res.send({"status": "on"});
             }
             else if(text == "desligar"){
-
-                var fs = require('fs');
-                fs.writeFile("/status/", "off", function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-
-                    console.log("The file was saved!");
-                }); 
-
+                sendStatus("off")
                 sendTextMessage(sender, "Desligando a lampada 🔌")
                 lampadaLigada = false;
                 sendJsonData(req, res, lampadaLigada)
@@ -80,6 +64,16 @@ app.post('/webhook/', function (req, res) {
 })
 
 const token = "EAAK38x1SRkUBAGeDEOtxnleV175oEcmSphJhbOKGGcDpZAHE0JDnXOk94mZCkG10x8C3Njps6lKhuxpCc7hkOXuCnMQo7U8r5tCoOnn7TalkrQUhKsiYKWxNMwUZBUAPEDKRNJhqLlOLqFEbIn2VIy7qoQSJFG4JJ2ME10vJQZDZD"
+
+function sendStatus(status) {
+    var fs = require('fs');
+    var stream = fs.createWriteStream("status.txt");
+    stream.once('open', function(fd) {
+      stream.write(status);
+      stream.end();
+  });
+}
+
 
 function sendJsonData(req, res, status) {
     app.get('/', function (req, res) {
