@@ -55,6 +55,9 @@ app.post('/webhook/', function (req, res) {
                 sendJsonData(req, res, lampadaLigada)
                 return res.send({"status": "off"});
             }
+            else if(text == "status") {
+                sendTextMessage(sender, "Estado da lampada:" + lampadaLigada)
+            }
             else {
                 sendTextMessage(sender, "Você me disse " + text.substring(0, 200) + " " + "... hmm, não entendi...")
             }
