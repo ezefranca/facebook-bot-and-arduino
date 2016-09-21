@@ -42,12 +42,30 @@ app.post('/webhook/', function (req, res) {
             let text = event.message.text
             
             if(text == "ligar"){
+                var fs = require('fs');
+                fs.writeFile("/status/", "on", function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+
+                    console.log("The file was saved!");
+                }); 
                 sendTextMessage(sender, "Ligando a lampada 💡💡")
                 lampadaLigada = true;
                 sendJsonData(req, res, lampadaLigada)
                 return res.send({"status": "on"});
             }
             else if(text == "desligar"){
+
+                var fs = require('fs');
+                fs.writeFile("/status/", "off", function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+
+                    console.log("The file was saved!");
+                }); 
+
                 sendTextMessage(sender, "Desligando a lampada 🔌")
                 lampadaLigada = false;
                 sendJsonData(req, res, lampadaLigada)
@@ -56,18 +74,18 @@ app.post('/webhook/', function (req, res) {
             else {
                 sendTextMessage(sender, "Você me disse " + text.substring(0, 200) + " " + "... hmm, não entendi...")
             }
-      }
-  }
-  res.sendStatus(200)
+        }
+    }
+    res.sendStatus(200)
 })
 
 const token = "EAAK38x1SRkUBAGeDEOtxnleV175oEcmSphJhbOKGGcDpZAHE0JDnXOk94mZCkG10x8C3Njps6lKhuxpCc7hkOXuCnMQo7U8r5tCoOnn7TalkrQUhKsiYKWxNMwUZBUAPEDKRNJhqLlOLqFEbIn2VIy7qoQSJFG4JJ2ME10vJQZDZD"
 
 function sendJsonData(req, res, status) {
     app.get('/', function (req, res) {
-    let data = {"status" : status}
-    res.send(data)
-  })
+        let data = {"status" : status}
+        res.send(data)
+    })
 }
 
 function sendTextMessage(sender, text) {
