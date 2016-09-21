@@ -1,13 +1,13 @@
-# facebook-bot-and-arduino
-Comunicação entre um bot do messenger do Facebook e Arduino apresentado no MBA da Fiap
+# Facebook Messenger + Arduino Intel Galileo 2 
+Comunicação entre um bot do messenger do Facebook e Arduino.
 
-# 🤖 Crindo o Bot no Facebook Messenger
+![Logo](https://raw.githubusercontent.com/ezefranca/ezefranca.github.io/master/img/facebook-chatbot-galileo.png)
 
-! [Texto Alt] (/ demo / Demo.gif)
+# 🤖 Criando o Bot no Facebook Messenger
 
 O Facebook recentemente abriu sua plataforma Messenger para permitir bots para conversar com os usuários através do Facebook Apps e do Facebook Pages.
 
-Você pode ler a [documentação] completa (https://developers.facebook.com/docs/messenger-platform/quickstart).
+Você pode ver a [documentação] completa (https://developers.facebook.com/docs/messenger-platform/quickstart).
 
 O Arduino Intel Galileo 2 é a evolução da placa Intel Galileo. É uma placa certificada Arduino. Vamos utiliza-la para receber dados de um servidor da Web e controlar uma lampada.  
 
@@ -17,27 +17,29 @@ Os bots do Messenger usam um servidor web para processar mensagens que recebe e 
 
 ### * Construindo o servidor *
 
-1. Instale o toolbelt Heroku daqui https://toolbelt.heroku.com para lançar, parar e monitorar instâncias. Registre-se gratuitamente no https://www.heroku.com se você não tiver uma conta ainda.
+Para este projeto utilizaremos o Heroku.  
 
-2. Instale Nó a partir daqui https://nodejs.org, este será o ambiente de servidor. Em seguida, abra o Terminal ou linha de comando Prompt e certifique-se que você tem a versão muito mais recente do NPM, instalando-lo novamente:
+1. Instale o toolbelt Heroku daqui https://toolbelt.heroku.com para comitar, parar e monitorar os apps que você tiver. Registre-se gratuitamente no https://www.heroku.com se você não tiver uma conta ainda.
+
+2. Instale o NodeJS a partir do site oficial https://nodejs.org, este será o ambiente de servidor. Em seguida, abra o Terminal ou linha de comando e verifique se você tem a versão mais recente do NPM, instalando ele novamente:
 
     ```
     sudo npm install npm -g
     ```
 
-3. Crie uma nova pasta em algum lugar e vamos criar um novo projeto Node. Pressione Enter para aceitar os padrões.
+3. Crie uma nova pasta em algum lugar e vamos criar um novo projeto Node. Pressione Enter para aceitar os padrões, ou preencha como quiser. 
 
     ```
     npm init
     ```
 
-4. Instale as dependências nó adicional. Express é para o servidor, o pedido é para o envio de mensagens e corpo-parser é processar mensagens.
+4. Instale as dependências adicionais do node. O Express é para o servidor, o Request é para o envio de mensagens e body-parser é para processar as mensagens.
 
     ```
     npm install express request body-parser --save
     ```
 
-5. Crie um arquivo index.js na pasta e copiar este para ele. Vamos começar por autenticar o bot.
+5. Crie um arquivo index.js na pasta e utilize este esqueleto para ele. Vamos começar autenticando o bot.
 
     ```javascript
     'use strict'
@@ -55,12 +57,12 @@ Os bots do Messenger usam um servidor web para processar mensagens que recebe e 
     // Process application/json
     app.use(bodyParser.json())
 
-    // Index route
+    // Index Route
     app.get('/', function (req, res) {
-    	res.send('Hello world, I am a chat bot')
+    	res.send('Olá, Eu sou um bot')
     })
 
-    // for Facebook verification
+    // para verificacao do Facebook
     app.get('/webhook/', function (req, res) {
     	if (req.query['hub.verify_token'] === 'my_voice_is_my_password_verify_me') {
     		res.send(req.query['hub.challenge'])
@@ -74,47 +76,47 @@ Os bots do Messenger usam um servidor web para processar mensagens que recebe e 
     })
     ```
 
-6. Faça um arquivo chamado Procfile e copiar este. Isto é assim Heroku pode saber o arquivo para executar.
+6. Faça um arquivo chamado Procfile e copie isto. O Procfile é assim para o Heroku poder saber que arquivo executar.
 
     ```
     web: node index.js
     ```
 
-7. Confirmar tudo o código com Git, em seguida, criar uma nova instância Heroku e empurre o código para a nuvem.
+7. Vamos criar um repositório com Git, adicionar nosso coódigo e em seguida, criar uma nova instância no Heroku e fazer o deploy do nosso código para a nuvem.
 
     ```
     git init
     git add .
-    git commit --message 'hello world'
+    git commit --message 'primeiro commit'
     heroku create
     git push heroku master
     ```
 
-### * Setup o Facebook App *
+### * Setup do Facebook App para o Bot *
 
-1. Criar ou configurar um Facebook App ou página aqui https://developers.facebook.com/apps/
+1. Criar ou configurar uma Página ou App do Facebook aqui https://developers.facebook.com/apps/
 
- ![Alt text](/demo/shot1.jpg)
+ ![Alt text](https://github.com/TechThings/messenger-bot-tutorial/raw/master/demo/shot1.jpg)
 
-2. No aplicativo vá para a guia Messenger, clique em Configurar webhook. Aqui você vai colocar no URL do seu servidor Heroku e um token. Certifique-se de verificar todos os campos de assinatura.
+2. No aplicativo vá para a aba Messenger, clique em Configurar webhook. Aqui você vai colocar no URL do seu servidor Heroku (que foi gerada anteriormente no commit) e o token. Certifique-se de verificar todos os campos.
 
-![Alt text](/demo/shot3.jpg)
+![Alt text](https://github.com/TechThings/messenger-bot-tutorial/raw/master/demo/shot3.jpg)
 
-3. Obter uma página de acesso token e salvar isto em algum lugar.
+3. Você vai precisar agora de um token de página do Facebook. Obtenha um e salve em algum lugar.
 
- ![Alt text](/demo/shot2.jpg)
+ ![Alt text](https://github.com/TechThings/messenger-bot-tutorial/raw/master/demo/shot2.jpg)
 
-4. Volte para o Terminal e digite este comando para acionar o aplicativo Facebbook para enviar mensagens. Lembre-se de usar o token solicitado anteriormente.
+4. Volte para o Terminal e digite este comando para ativar o aplicativo Facebbook para enviar mensagens. Lembre-se de usar o token de pagina solicitado no passo anterior.
 
     ```bash
     curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=<PAGE_ACCESS_TOKEN>"
     ```
 
-### * Setup o bot *
+### *Setup do bot*
 
-Agora que o Facebook e Heroku pode falar um com o outro que pode codificar o bot.
+Agora que o Facebook e o Heroku podem falar um com o outro podemos escrever o código básico do bot.
 
-1. Adicione um ponto final API para index.js para processar mensagens. Lembre-se de incluir também o token chegamos mais cedo.
+1. Adicione um ponto final API para index.js para processar mensagens. Lembre-se de incluir também o token de página que tinhamos pegado antes.
 
     ```javascript
     app.post('/webhook/', function (req, res) {
@@ -124,7 +126,7 @@ Agora que o Facebook e Heroku pode falar um com o outro que pode codificar o bot
 		    let sender = event.sender.id
 		    if (event.message && event.message.text) {
 			    let text = event.message.text
-			    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+			    sendTextMessage(sender, "Texto recebido foi: " + text.substring(0, 200))
 		    }
 	    }
 	    res.sendStatus(200)
@@ -132,36 +134,7 @@ Agora que o Facebook e Heroku pode falar um com o outro que pode codificar o bot
 
     const token = "<PAGE_ACCESS_TOKEN>"
     ```
-    
-    **Optional, but recommended**: keep your app secrets out of version control!
-    - On Heroku, its easy to create dynamic runtime variables (known as [config vars](https://devcenter.heroku.com/articles/config-vars)). This can be done in the Heroku dashboard UI for your app **or** from the command line:
-    ![Alt text](/demo/config_vars.jpg)
-    ```bash
-    heroku config:set FB_PAGE_ACCESS_TOKEN=fake-access-token-dhsa09uji4mlkasdfsd
-    
-    # view
-    heroku config
-    ```
-
-    - For local development: create an [environmental variable](https://en.wikipedia.org/wiki/Environment_variable) in your current session or add to your shell config file.
-    ```bash
-    # create env variable for current shell session
-    export FB_PAGE_ACCESS_TOKEN=fake-access-token-dhsa09uji4mlkasdfsd
-    
-    # alternatively, you can add this line to your shell config
-    # export FB_PAGE_ACCESS_TOKEN=fake-access-token-dhsa09uji4mlkasdfsd
-    
-    echo $FB_PAGE_ACCESS_TOKEN
-    ```
-    
-    - `config var` access at runtime
-    ``` javascript
-    const token = process.env.FB_PAGE_ACCESS_TOKEN
-    ```
-    
-    
-    
-3. Adicione uma função para ecoar mensagens
+2. Adicione a função para replicar as mensagens
 
     ```javascript
     function sendTextMessage(sender, text) {
@@ -184,7 +157,7 @@ Agora que o Facebook e Heroku pode falar um com o outro que pode codificar o bot
     }
     ```
 
-4. Cometer o código novamente e empurrar para Heroku
+4. Comitar o código novamente e dar push para Heroku
 
     ```
     git add .
@@ -194,9 +167,9 @@ Agora que o Facebook e Heroku pode falar um com o outro que pode codificar o bot
 
 5. Vá para a página do Facebook e clique na mensagem para começar a conversar!
 
-![Alt text](/demo/shot4.jpg)
+![Alt text](https://github.com/TechThings/messenger-bot-tutorial/raw/master/demo/shot4.jpg)
 
-## ⚙ Customize what the bot says
+## Receptando algumas palavras e interagindo
 
 ### *Send a Structured Message*
 
@@ -304,12 +277,6 @@ You can use https://m.me/<PAGE_USERNAME> to have someone start a chat.
 ## 💡 What's next?
 
 You can learn how to get your bot approved for public use [here](https://developers.facebook.com/docs/messenger-platform/app-review).
-
-You can also connect an AI brain to your bot [here](https://wit.ai)
-
-Read about all things chat bots with the ChatBots Magazine [here](https://medium.com/chat-bots)
-
-You can also design Messenger bots in Sketch with the [Bots UI Kit](https://bots.mockuuups.com)!
 
 ## How I can help
 
