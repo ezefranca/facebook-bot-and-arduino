@@ -17,7 +17,7 @@ app.use(bodyParser.json())
 
 // Index route
 app.get('/', function (req, res) {
-    res.send('Olá amiguinho, tudo bem?')
+    res.send(lampadaLigada)
 })
 
 // for Facebook verification
