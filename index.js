@@ -40,16 +40,21 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
-            sendTextMessage(sender, "Voce me disse " + text.substring(0, 200) + " " + "...nao entendi, mas depois te ajudo a comprar um carro beleza? 👍 ")
+            
             if(text == "ligar"){
+                sendTextMessage(sender, "Ligando a lampada 💡💡")
                 lampadaLigada = true;
                 sendJsonData(req, res, lampadaLigada)
                 return res.send({"status": "on"});
             }
             else if(text == "desligar"){
+                sendTextMessage(sender, "Desligando a lampada 🔌")
                 lampadaLigada = false;
                 sendJsonData(req, res, lampadaLigada)
                 return res.send({"status": "off"});
+            }
+            else {
+                sendTextMessage(sender, "Você me disse " + text.substring(0, 200) + " " + "... hmm, não entendi...")
             }
       }
   }
