@@ -171,113 +171,11 @@ Agora que o Facebook e o Heroku podem falar um com o outro podemos escrever o c�
 
 ## Receptando algumas palavras e interagindo
 
-### *Send a Structured Message*
+### *Filtrando comandos*
 
-Facebook Messenger can send messages structured as cards or buttons. 
+## Configurando nosso sistema de controle da lampada (Intel Galieo) 
 
-![Alt text](/demo/shot5.jpg)
+### *Esquema elétrico* 
 
-1. Copy the code below to index.js to send an test message back as two cards.
-
-    ```javascript
-    function sendGenericMessage(sender) {
-	    let messageData = {
-		    "attachment": {
-			    "type": "template",
-			    "payload": {
-    				"template_type": "generic",
-				    "elements": [{
-    					"title": "First card",
-					    "subtitle": "Element #1 of an hscroll",
-					    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
-					    "buttons": [{
-						    "type": "web_url",
-						    "url": "https://www.messenger.com",
-						    "title": "web url"
-					    }, {
-						    "type": "postback",
-						    "title": "Postback",
-						    "payload": "Payload for first element in a generic bubble",
-					    }],
-				    }, {
-					    "title": "Second card",
-					    "subtitle": "Element #2 of an hscroll",
-					    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-					    "buttons": [{
-						    "type": "postback",
-						    "title": "Postback",
-						    "payload": "Payload for second element in a generic bubble",
-					    }],
-				    }]
-			    }
-		    }
-	    }
-	    request({
-		    url: 'https://graph.facebook.com/v2.6/me/messages',
-		    qs: {access_token:token},
-		    method: 'POST',
-		    json: {
-			    recipient: {id:sender},
-			    message: messageData,
-		    }
-	    }, function(error, response, body) {
-		    if (error) {
-			    console.log('Error sending messages: ', error)
-		    } else if (response.body.error) {
-			    console.log('Error: ', response.body.error)
-		    }
-	    })
-    }
-    ```
-
-### *Act on what the user messages*
-
-What happens when the user clicks on a message button or card though? Let's update the webhook API one more time to send back a postback function.
-
-```javascript  
-  app.post('/webhook/', function (req, res) {
-    let messaging_events = req.body.entry[0].messaging
-    for (let i = 0; i < messaging_events.length; i++) {
-      let event = req.body.entry[0].messaging[i]
-      let sender = event.sender.id
-      if (event.message && event.message.text) {
-  	    let text = event.message.text
-  	    if (text === 'Generic') {
-  		    sendGenericMessage(sender)
-  		    continue
-  	    }
-  	    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
-      }
-      if (event.postback) {
-  	    let text = JSON.stringify(event.postback)
-  	    sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-  	    continue
-      }
-    }
-    res.sendStatus(200)
-  })
-```
-
-Git add, commit, and push to Heroku again.
-
-Now when you chat with the bot and type 'Generic' you can see this.
-
-   ![Alt text](/demo/shot6.jpg)
-
-## 📡 How to share your bot
-
-### *Add a chat button to your webpage*
-
-Go [here](https://developers.facebook.com/docs/messenger-platform/plugin-reference) to learn how to add a chat button your page.
-
-### *Create a shortlink*
-
-You can use https://m.me/<PAGE_USERNAME> to have someone start a chat.
-
-## 💡 What's next?
-
-You can learn how to get your bot approved for public use [here](https://developers.facebook.com/docs/messenger-platform/app-review).
-
-## How I can help
-
-I build and design bots all day. Email me for help!
+*Atenção: este circuito vai ser alimentado por uma tensão elétrica de 127v ou 220v.
+![alerta](http://static.webarcondicionado.com.br/blog/uploads/2014/10/439893-choque-elétrico-300x256.jpg)
