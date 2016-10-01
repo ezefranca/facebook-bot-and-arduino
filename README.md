@@ -217,11 +217,74 @@ app.post('/webhook/', function (req, res) {
 ### *Esquema elétrico* 
 
 *Atenção: este circuito vai ser alimentado por uma tensão elétrica de 127v ou 220v.
-![alerta](http://static.webarcondicionado.com.br/blog/uploads/2014/10/439893-choque-elétrico-300x256.jpg)
+![alerta](http://www.seton.com.br/media/catalog/product/cache/1/small_image/50x50/9df78eab33525d08d6e5fb8d27136e95/m/6/m6515-ba.jpg)
 
  *Pino 9* - Sinal do Rele
  *GND*
  *VCC*
  
 ![circuito](https://raw.githubusercontent.com/ezefranca/facebook-bot-and-arduino/master/images/Lampada.png)
+ 
+ 
+ ### *Pulling do Arduino no serviço Web* 
+ 
+ 
+ ```arduino
+ byte mac[] = { 0x98, 0x4F, 0xEE, 0x05, 0x44, 0x9B };
+ 
+ void setup() {
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+  }
+  Ethernet.begin(mac, ip);
+  Serial.begin(9600);
+  system("telnetd -l /bin/sh"); //Start the telnet server on Galileo
+  system("ifconfig eth0 10.1.102.33 netmask 255.255.255.0 up");
+  system("route add default gw 10.1.102.254 eth0");
+  system("echo 'nameserver 192.168.60.81' > /etc/resolv.conf");
+  while (!Serial) {
+    ; 
+  }
+  delay(3000);
+  Serial.println("connecting");
+  Serial.println(client);
+  delay(3000);
+  
+  if (client.connect(server, 80)) {
+    Serial.println("connected");
+    // Make a HTTP request:
+    client.println("GET / HTTP/1.0");
+    //client.println();
+    httpRequest();
+  }
+  else {
+    // if you didn’t get a connection to the server:
+    Serial.println("connection failed");
+  }
+}
+ 
+ 
+ void httpRequest() {
+  // Encerra todas conexoes para um novo request
+  client.stop();
+
+  // Se conectou com sucesso
+  if (client.connect(server, 80)) {
+    //Serial.println("conectandoooo...");
+    // mandando aquele GET 
+    client.println("GET / HTTP/1.1");
+    client.println("Host: lampada-fiap.herokuapp.com");
+    client.println("User-Agent: arduino-ethernet");
+    client.println("Connection: close");
+    client.println();
+
+    // Pra saber quanto tempo levou
+    lastConnectionTime = millis();
+  } else {
+    // Se der merda
+    Serial.println("connection failed");
+  }
+}
+ ```
+ 
  
