@@ -173,9 +173,55 @@ Agora que o Facebook e o Heroku podem falar um com o outro podemos escrever o c�
 
 ### *Filtrando comandos*
 
+Como o sistema se comunida através do webhook, vamos alterar nossas função para lidar com duas entradas: *ligar* e *desligar*
+
+(bem porco, aqui poderiamos utilizar IA, um processador de linguagem natural ou qualquer tecnologia mais robusta para interpretar as mensagens).
+
+```javascript
+app.post('/webhook/', function (req, res) {
+    let messaging_events = req.body.entry[0].messaging
+    for (let i = 0; i < messaging_events.length; i++) {
+        let event = req.body.entry[0].messaging[i]
+        let sender = event.sender.id
+        if (event.message && event.message.text) {
+            let text = event.message.text
+            
+            if(text == "ligar"){
+                sendStatus("on")
+                sendTextMessage(sender, "Ligando a lampada 💡💡")
+                lampadaLigada = true;
+                sendJsonData(req, res, lampadaLigada)
+                return res.send({"status": "on"});
+            }
+            else if(text == "desligar"){
+                sendStatus("off")
+                sendTextMessage(sender, "Desligando a lampada 🔌")
+                lampadaLigada = false;
+                sendJsonData(req, res, lampadaLigada)
+                return res.send({"status": "off"});
+            }
+            else if(text == "status") {
+                sendTextMessage(sender, "Estado da lampada:" + lampadaLigada)
+            }
+            else {
+                sendTextMessage(sender, "Você me disse " + text.substring(0, 200) + " " + "... hmm, não entendi...")
+            }
+        }
+    }
+    res.sendStatus(200)
+})
+ ```
+ 
 ## Configurando nosso sistema de controle da lampada (Intel Galieo) 
 
 ### *Esquema elétrico* 
 
 *Atenção: este circuito vai ser alimentado por uma tensão elétrica de 127v ou 220v.
 ![alerta](http://static.webarcondicionado.com.br/blog/uploads/2014/10/439893-choque-elétrico-300x256.jpg)
+
+ *Pino 9* - Sinal do Rele
+ *GND*
+ *VCC*
+ 
+![circuito](https://raw.githubusercontent.com/ezefranca/facebook-bot-and-arduino/master/images/Lampada.png)
+ 
